@@ -1,0 +1,139 @@
+# Trading Strategy Backtester Configuration
+
+# Data Settings
+data:
+  default_ticker: "SPY"
+  start_date: "2020-01-01"
+  end_date: "2024-12-01"
+  data_source: "yfinance"
+  cache_data: true
+  cache_duration_hours: 24
+
+# Backtesting Parameters
+backtesting:
+  initial_capital: 100000
+  commission: 0.001
+  slippage: 0.0005
+  risk_free_rate: 0.02
+  benchmark_ticker: "SPY"
+
+# Risk Management
+risk_management:
+  max_risk_per_trade: 0.02
+  max_portfolio_risk: 0.06
+  max_correlation: 0.8
+  position_sizing_method: "fixed_fractional"  # fixed_fractional, kelly, volatility_targeting
+  stop_loss_pct: 0.05
+  take_profit_pct: 0.10
+
+# Portfolio Optimization
+portfolio:
+  rebalancing_frequency: "monthly"  # daily, weekly, monthly, quarterly
+  optimization_method: "max_sharpe"  # max_sharpe, min_volatility, risk_parity, equal_weight
+  lookback_window: 252
+  min_weight: 0.0
+  max_weight: 0.4
+
+# Walk-Forward Analysis
+walk_forward:
+  optimization_window: 252
+  validation_window: 63
+  step_size: 21
+  optimization_metric: "sharpe_ratio"
+  optimization_method: "grid_search"  # grid_search, random_search, genetic_algorithm
+  min_trades: 10
+
+# Monte Carlo Settings
+monte_carlo:
+  n_simulations: 1000
+  confidence_levels: [0.95, 0.99]
+  bootstrap_samples: 500
+
+# Strategy Parameters
+strategies:
+  moving_average_crossover:
+    fast_period: [10, 15, 20, 25]
+    slow_period: [30, 40, 50, 60]
+  
+  rsi_mean_reversion:
+    rsi_period: [10, 14, 18, 22]
+    oversold: [20, 25, 30, 35]
+    overbought: [65, 70, 75, 80]
+  
+  macd:
+    fast_ema: [8, 12, 16]
+    slow_ema: [21, 26, 31]
+    signal_ema: [6, 9, 12]
+  
+  bollinger_bands:
+    period: [15, 20, 25]
+    std_dev: [1.5, 2.0, 2.5]
+
+# Technical Indicators
+indicators:
+  default_periods:
+    sma: 20
+    ema: 20
+    rsi: 14
+    macd_fast: 12
+    macd_slow: 26
+    macd_signal: 9
+    bb_period: 20
+    bb_std: 2.0
+    atr: 14
+    adx: 14
+    stochastic_k: 14
+    stochastic_d: 3
+    williams_r: 14
+    cci: 20
+
+# Visualization
+visualization:
+  theme: "plotly_dark"
+  width: 1200
+  height: 800
+  show_trades: true
+  show_indicators: true
+  save_charts: true
+  chart_format: "html"
+
+# Output Settings
+output:
+  results_dir: "results"
+  save_trades: true
+  save_equity_curves: true
+  save_performance_metrics: true
+  export_formats: ["csv", "json", "excel"]
+  create_report: true
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  log_to_file: true
+  log_file: "backtester.log"
+  max_log_size_mb: 10
+  backup_count: 5
+
+# Performance
+performance:
+  use_multiprocessing: true
+  max_workers: 4
+  chunk_size: 1000
+  memory_limit_gb: 8
+
+# Database (optional)
+database:
+  enabled: false
+  type: "postgresql"  # postgresql, sqlite
+  host: "localhost"
+  port: 5432
+  database: "trading_db"
+  username: "trader"
+  password: "password"
+
+# API Settings (for live data)
+api:
+  alpha_vantage_key: ""
+  iex_token: ""
+  quandl_key: ""
+  rate_limit_delay: 0.2

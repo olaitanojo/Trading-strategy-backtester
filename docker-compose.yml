@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Main backtester service
+  backtester:
+    build: .
+    container_name: trading_backtester
+    volumes:
+      - ./data:/app/data
+      - ./results:/app/results
+      - ./config:/app/config
+    environment:
+      - PYTHONPATH=/app
+    networks:
+      - trading_network
+    restart: unless-stopped
+
+  # Jupyter notebook service for interactive analysis
+  jupyter:
+    build: .
+    container_name: trading_jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/app/notebooks
+      - ./data:/app/data
+      - ./results:/app/results
+      - ./config:/app/config
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONPATH=/app
+    networks:
+      - trading_network
+    command: >
+      bash -c "
+        jupyter lab --ip=0.0.0.0 --port=8888 --no-browser 
+        --allow-root --NotebookApp.token='' --NotebookApp.password=''
+        --notebook-dir=/app
+      "
+    restart: unless-stopped
+
+  # Redis service for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: trading_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - trading_network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # PostgreSQL database for storing results (optional)
+  postgres:
+    image: postgres:15-alpine
+    container_name: trading_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=trading_db
+      - POSTGRES_USER=trader
+      - POSTGRES_PASSWORD=secure_password_change_me
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - trading_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  trading_network:
+    driver: bridge
