@@ -52,33 +52,158 @@ python backtester.py
 
 ## 🏗️ Architecture
 
+### System Overview
 ```mermaid
 graph TB
-    A[Data Sources] --> B[Technical Indicators]
-    B --> C[Strategy Engine]
-    C --> D[Risk Management]
-    D --> E[Portfolio Optimization]
-    E --> F[Walk-Forward Analysis]
-    F --> G[Performance Analytics]
-    G --> H[Visualization & Reporting]
-    
-    subgraph "Core Modules"
-        B
-        C
-        D
-        E
-        F
+    subgraph "Data Layer"
+        A1[Market Data APIs]
+        A2[Historical Data]
+        A3[Alternative Data]
+        A4[Economic Data]
     end
     
-    subgraph "Advanced Features"
-        I[Monte Carlo]
-        J[Machine Learning]
-        K[Alternative Data]
+    subgraph "Indicator Layer"
+        B1[Technical Indicators]
+        B2[Custom Indicators]
+        B3[Pattern Recognition]
+        B4[Sentiment Analysis]
     end
     
-    G --> I
-    G --> J
-    A --> K
+    subgraph "Strategy Layer"
+        C1[Mean Reversion]
+        C2[Momentum Strategies]
+        C3[Trend Following]
+        C4[Multi-Factor]
+        C5[ML-Enhanced]
+    end
+    
+    subgraph "Risk Layer"
+        D1[Position Sizing]
+        D2[Risk Metrics]
+        D3[Portfolio Risk]
+        D4[Dynamic Hedging]
+    end
+    
+    subgraph "Optimization Layer"
+        E1[Portfolio Optimization]
+        E2[Parameter Optimization]
+        E3[Walk-Forward Analysis]
+        E4[Monte Carlo]
+    end
+    
+    subgraph "Analytics Layer"
+        F1[Performance Metrics]
+        F2[Risk Analytics]
+        F3[Attribution Analysis]
+        F4[Visualization]
+    end
+    
+    A1 --> B1
+    A2 --> B1
+    A3 --> B4
+    A4 --> B4
+    
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+    B4 --> C4
+    B1 --> C5
+    
+    C1 --> D1
+    C2 --> D1
+    C3 --> D2
+    C4 --> D3
+    C5 --> D4
+    
+    D1 --> E1
+    D2 --> E2
+    D3 --> E3
+    D4 --> E4
+    
+    E1 --> F1
+    E2 --> F2
+    E3 --> F3
+    E4 --> F4
+```
+
+### Backtesting Engine Architecture
+```mermaid
+sequenceDiagram
+    participant User
+    participant Engine as Backtest Engine
+    participant Strategy as Trading Strategy
+    participant Risk as Risk Manager
+    participant Portfolio as Portfolio Manager
+    participant Analytics as Performance Analytics
+    
+    User->>Engine: Initialize Backtest
+    Engine->>Strategy: Load Strategy
+    Strategy->>Engine: Strategy Configuration
+    
+    loop For each time period
+        Engine->>Strategy: Generate Signals
+        Strategy-->>Engine: Buy/Sell/Hold Signals
+        Engine->>Risk: Validate Risk Parameters
+        Risk-->>Engine: Position Size/Risk Check
+        Engine->>Portfolio: Execute Trade
+        Portfolio-->>Engine: Trade Confirmation
+        Engine->>Portfolio: Update Positions
+    end
+    
+    Engine->>Analytics: Calculate Metrics
+    Analytics-->>Engine: Performance Results
+    Engine-->>User: Backtest Results
+```
+
+### Strategy Framework
+```mermaid
+classDiagram
+    class BaseStrategy {
+        <<abstract>>
+        +name: str
+        +parameters: Dict
+        +generate_signals()
+        +validate_parameters()
+        +get_description()
+    }
+    
+    class TechnicalStrategy {
+        +indicators: List[Indicator]
+        +signal_rules: Dict
+        +calculate_indicators()
+        +apply_signal_rules()
+    }
+    
+    class MLStrategy {
+        +model: MLModel
+        +features: List[str]
+        +train_model()
+        +predict_signals()
+        +feature_importance()
+    }
+    
+    class RiskManager {
+        +position_sizer: PositionSizer
+        +risk_metrics: RiskMetrics
+        +calculate_position_size()
+        +check_risk_limits()
+        +update_risk_metrics()
+    }
+    
+    class BacktestEngine {
+        +portfolio: Portfolio
+        +strategy: BaseStrategy
+        +risk_manager: RiskManager
+        +run_backtest()
+        +calculate_performance()
+    }
+    
+    BaseStrategy <|-- TechnicalStrategy
+    BaseStrategy <|-- MLStrategy
+    BacktestEngine --> BaseStrategy
+    BacktestEngine --> RiskManager
+    TechnicalStrategy --> RiskManager
+    MLStrategy --> RiskManager
 ```
 
 ---
